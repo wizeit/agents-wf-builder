@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3004:3004"
+      - "3003:3003"
     restart: unless-stopped
     depends_on:
       migrate:

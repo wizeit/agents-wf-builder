@@ -1,0 +1,16 @@
+services:
+  workflow-builder:
+    container_name: agents-wf-builder
+    image: ghcr.io/wizeit/agents-wf-builder:${VERSION:-main}
+    env_file:
+      - .env
+    ports:
+      - "3003:3003"
+    restart: unless-stopped
+    networks:
+      - agents-network
+
+networks:
+  agents-network:
+    name: agents-network
+    external: true
