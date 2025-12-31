@@ -1,7 +1,7 @@
 services:
-  workflow-builder:
-    container_name: agents-wf-builder
-    image: ghcr.io/wizeit/agents-wf-builder:${VERSION:-main}
+  wf-builder:
+    container_name: wf-builder
+    image: ghcr.io/wizeit/wf-builder:${VERSION:-main}
     env_file:
       - .env
     ports:

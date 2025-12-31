@@ -1,7 +1,7 @@
 services:
   migrate:
-    container_name: agents-wf-builder-migrate
-    image: agents-wf-builder-migrate
+    container_name: wf-builder-migrate
+    image: wf-builder-migrate
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,8 +13,8 @@ services:
     restart: "no"
 
   app:
-    container_name: agents-wf-builder
-    image: agents-wf-builder
+    container_name: wf-builder
+    image: wf-builder
     build:
       context: .
       dockerfile: Dockerfile
