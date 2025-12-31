@@ -8,7 +8,7 @@ A template for building your own AI-driven workflow automation platform. Built o
 
 You can deploy your own version of the workflow builder to Vercel with one click:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.new/agents-wf-builder)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.new/wf-builder)
 
 **What happens during deployment:**
 
