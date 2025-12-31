@@ -9,7 +9,7 @@ services:
     env_file:
       - .env
     networks:
-      - agents-network
+      - main-network
     restart: "no"
 
   app:
@@ -28,9 +28,8 @@ services:
       migrate:
         condition: service_completed_successfully
     networks:
-      - agents-network
+      - main-network
 
 networks:
-  agents-network:
-    name: agents-network
+  main-network:
     external: true
