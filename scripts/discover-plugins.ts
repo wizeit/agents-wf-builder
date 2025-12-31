@@ -41,7 +41,9 @@ const PLUGINS_MARKER_REGEX =
   /<!-- PLUGINS:START[^>]*-->[\s\S]*?<!-- PLUGINS:END -->/;
 
 // System integrations that don't have plugins
-const SYSTEM_INTEGRATION_TYPES = ["database"] as const;
+// NOTE: si agregás features que guardan credenciales en `integrations` pero no viven como plugin,
+// deben estar acá para que `IntegrationType` incluya el literal y no rompa el build.
+const SYSTEM_INTEGRATION_TYPES = ["database", "ai-gateway"] as const;
 
 // Regex patterns for codegen template generation
 const LEADING_WHITESPACE_PATTERN = /^\s*/;

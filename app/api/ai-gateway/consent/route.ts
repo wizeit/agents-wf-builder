@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { decrypt, encrypt } from "@/lib/db/integrations";
 import { accounts, integrations } from "@/lib/db/schema";
-import { generateId } from "@/lib/utils/id";
 
 const API_KEY_PURPOSE = "ai-gateway";
 const API_KEY_NAME = "Workflow Builder Gateway Key";
@@ -103,16 +102,22 @@ async function saveIntegration(params: SaveIntegrationParams): Promise<string> {
   const encryptedConfig = encrypt(JSON.stringify(configData));
 
   // Always create a new integration - users can have multiple managed keys for different teams
-  const integrationId = generateId();
-  await db.insert(integrations).values({
-    id: integrationId,
+  const [row] = await db
+    .insert(integrations)
+    .values({
     userId,
     name: teamName,
     type: "ai-gateway",
     config: encryptedConfig,
     isManaged: true,
-  });
-  return integrationId;
+    })
+    .returning({ id: integrations.id });
+
+  if (!row?.id) {
+    throw new Error("Failed to create integration");
+  }
+
+  return row.id;
 }
 
 /**
