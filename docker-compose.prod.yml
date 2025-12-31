@@ -8,9 +8,8 @@ services:
       - "3003:3003"
     restart: unless-stopped
     networks:
-      - agents-network
+      - main-network
 
 networks:
-  agents-network:
-    name: agents-network
+  main-network:
     external: true
