@@ -1,0 +1,67 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-agents_wf_builder}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-agents_wf_builder}}
+    command: ["node", "scripts/migrate.mjs"]
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT:-3000}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-agents_wf_builder}}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:${PORT:-3000}}
+      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+    ports:
+      - "${PORT:-3000}:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db_data:
+
+
